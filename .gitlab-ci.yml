@@ -1,0 +1,31 @@
+image: hashicorp/terraform:latest
+
+stages:
+  - init
+  - plan
+  - apply
+
+variables:
+  TF_VAR_aws_access_key: "$AWS_ACCESS_KEY"
+  TF_VAR_aws_secret_key: "$AWS_SECRET_KEY"
+
+before_script:
+  - terraform --version
+  - terraform init
+
+init:
+  stage: init
+  script:
+    - terraform validate
+
+plan:
+  stage: plan
+  script:
+    - terraform plan -out=tfplan
+
+apply:
+  stage: apply
+  script:
+    - terraform apply -auto-approve tfplan
+  only:
+    - main
